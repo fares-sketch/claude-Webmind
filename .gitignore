@@ -1,0 +1,28 @@
+# Claude Code config
+.claude.json
+.claude.json.backup
+.claude/
+!.claude/skills/
+
+# Antigravity extension
+.antigravity/
+
+# Node
+node_modules/N8N_CONTACT_WEBHOOK=https://webmind-agency.app.n8n.cloud/webhook/lead-capture
+
+.node_repl_history
+
+# VS Code
+.vscode/
+*.vsix
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# Credentials
+credentials.json

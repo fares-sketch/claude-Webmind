@@ -1,0 +1,445 @@
+{
+  "name": "WebMind — Lead Engine v1",
+  "nodes": [
+    {
+      "id": "node_webhook",
+      "name": "Webhook — Réception formulaire",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "parameters": {
+        "path": "lead-capture",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "notes": "Point d'entrée unique. Déclenché par toute soumission de formulaire."
+    },
+    {
+      "id": "node_validate",
+      "name": "Validation & Anti-spam",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300],
+      "parameters": {
+        "jsCode": "// ── Validation & Anti-spam ──────────────────────────────\nconst body = $input.first().json.body || $input.first().json;\n\nconst { name, email, phone, company, message, source, honeypot } = body;\n\n// 1. Champs requis\nconst required = { name, email, phone, message };\nfor (const [field, value] of Object.entries(required)) {\n  if (!value || String(value).trim() === '') {\n    throw new Error(`Champ manquant : ${field}`);\n  }\n}\n\n// 2. Format email\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!emailRegex.test(email)) {\n  throw new Error('Format email invalide');\n}\n\n// 3. Honeypot anti-spam (champ caché rempli = bot)\nif (honeypot && honeypot.trim() !== '') {\n  throw new Error('Spam détecté — honeypot rempli');\n}\n\n// 4. Longueur message minimum\nif (message.trim().length < 10) {\n  throw new Error('Message trop court');\n}\n\n// 5. Output structuré\nreturn [{\n  json: {\n    name: name.trim(),\n    email: email.trim().toLowerCase(),\n    phone: phone ? phone.trim() : '',\n    company: company ? company.trim() : 'Non renseigné',\n    message: message.trim(),\n    source: source || 'website',\n    timestamp: new Date().toISOString(),\n    prenom: name.trim().split(' ')[0]\n  }\n}];"
+      },
+      "notes": "Valide les champs requis, format email, honeypot anti-spam. Arrête le workflow si invalide."
+    },
+    {
+      "id": "node_webhook_response",
+      "name": "Réponse immédiate au formulaire",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [700, 150],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true, \"message\": \"Votre message a bien été reçu.\" }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "notes": "Répond immédiatement au formulaire (évite timeout). Le traitement continue en parallèle."
+    },
+    {
+      "id": "node_claude_scoring",
+      "name": "Claude API — Scoring & Qualification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [700, 350],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $credentials.anthropicApiKey }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "model": "claude-sonnet-4-6",
+          "max_tokens": 512,
+          "system": "Tu es un expert en qualification de leads B2B. Tu analyses les soumissions de formulaire et retournes uniquement un JSON valide, sans texte autour.",
+          "messages": [
+            {
+              "role": "user",
+              "content": "=Analyse ce lead et retourne exactement ce JSON (rien d'autre) :\n\n{\n  \"score\": \"Hot\" | \"Warm\" | \"Cold\",\n  \"raison\": \"string (max 2 phrases, en français)\",\n  \"intent_signals\": [\"signal1\", \"signal2\"],\n  \"action\": \"string (prochaine étape recommandée)\",\n  \"urgence\": \"high\" | \"medium\" | \"low\"\n}\n\nCritères :\n- Hot  = intention d'achat claire + entreprise identifiable + urgence exprimée\n- Warm = intérêt réel mais urgence absente ou information incomplète\n- Cold = curieux, étudiant, concurrent, message vague ou hors cible\n\nNom         : {{ $node['Validation & Anti-spam'].json.name }}\nEmail       : {{ $node['Validation & Anti-spam'].json.email }}\nTéléphone   : {{ $node['Validation & Anti-spam'].json.phone }}\nEntreprise  : {{ $node['Validation & Anti-spam'].json.company }}\nMessage     : {{ $node['Validation & Anti-spam'].json.message }}\nSource      : {{ $node['Validation & Anti-spam'].json.source }}\nDate        : {{ $node['Validation & Anti-spam'].json.timestamp }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "notes": "Appel Claude API. En cas d'échec, le noeud suivant applique le score par défaut."
+    },
+    {
+      "id": "node_parse_score",
+      "name": "Parser la réponse Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [950, 350],
+      "parameters": {
+        "jsCode": "// ── Parse réponse Claude ──────────────────────────────\nconst lead = $node['Validation & Anti-spam'].json;\nlet scoring;\n\ntry {\n  const content = $input.first().json.content[0].text;\n  // Extraire le JSON même s'il y a du texte autour\n  const jsonMatch = content.match(/\\{[\\s\\S]*\\}/);\n  if (!jsonMatch) throw new Error('Pas de JSON dans la réponse');\n  scoring = JSON.parse(jsonMatch[0]);\n  \n  // Valider les champs attendus\n  if (!['Hot', 'Warm', 'Cold'].includes(scoring.score)) {\n    throw new Error('Score invalide');\n  }\n} catch (e) {\n  // Fallback : score Warm + flag manuel\n  scoring = {\n    score: 'Warm',\n    raison: 'Score automatique indisponible — revue manuelle requise.',\n    intent_signals: [],\n    action: 'Vérifier manuellement ce lead',\n    urgence: 'medium',\n    fallback: true\n  };\n}\n\nreturn [{\n  json: {\n    ...lead,\n    score: scoring.score,\n    raison: scoring.raison,\n    intent_signals: (scoring.intent_signals || []).join(', '),\n    action: scoring.action,\n    urgence: scoring.urgence,\n    scoring_fallback: scoring.fallback || false\n  }\n}];"
+      },
+      "notes": "Parse le JSON Claude. Si erreur → fallback Warm + flag pour revue manuelle."
+    },
+    {
+      "id": "node_router",
+      "name": "Router — Hot/Warm vs Cold",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1200, 350],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "rules": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": "Cold",
+                    "operator": { "type": "string", "operation": "notEquals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "qualified"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": "Cold",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "nurture"
+            }
+          ]
+        }
+      },
+      "notes": "Hot ou Warm → pipeline commercial. Cold → séquence nurture."
+    },
+    {
+      "id": "node_crm_create",
+      "name": "CRM — Créer contact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1450, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.airtable.com/v0/{{BASE_ID}}/Leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $credentials.airtableApiKey }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "records": [
+            {
+              "fields": {
+                "Nom": "={{ $json.name }}",
+                "Email": "={{ $json.email }}",
+                "Téléphone": "={{ $json.phone }}",
+                "Entreprise": "={{ $json.company }}",
+                "Message": "={{ $json.message }}",
+                "Score": "={{ $json.score }}",
+                "Raison IA": "={{ $json.raison }}",
+                "Action recommandée": "={{ $json.action }}",
+                "Urgence": "={{ $json.urgence }}",
+                "Source": "={{ $json.source }}",
+                "Date": "={{ $json.timestamp }}",
+                "Statut": "Nouveau"
+              }
+            }
+          ]
+        }
+      },
+      "notes": "Crée le contact dans Airtable. Remplacer BASE_ID par l'ID de la base client. Adaptable HubSpot."
+    },
+    {
+      "id": "node_sms_lead",
+      "name": "Twilio — SMS Confirmation Lead",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1700, 100],
+      "parameters": {
+        "operation": "send",
+        "from": "={{$credentials.twilioPhoneNumber}}",
+        "to": "={{ $json.phone }}",
+        "message": "=Bonjour {{ $json.prenom }}, merci pour votre message !\nNotre équipe vous contacte dans moins d'une heure.\nRéservez un créneau : {{LIEN_BOOKING}}\n— {{NOM_ENTREPRISE}}"
+      },
+      "notes": "Remplacer LIEN_BOOKING et NOM_ENTREPRISE par les variables client."
+    },
+    {
+      "id": "node_slack_sales",
+      "name": "Slack — Alerte Commercial",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [1700, 280],
+      "parameters": {
+        "operation": "post",
+        "channel": "#leads-chauds",
+        "text": "=🔥 Nouveau lead *{{ $json.score }}* reçu\n\n*Nom :* {{ $json.name }}\n*Entreprise :* {{ $json.company }}\n*Email :* {{ $json.email }}\n*Téléphone :* {{ $json.phone }}\n\n*Résumé IA :* {{ $json.raison }}\n*Signaux :* {{ $json.intent_signals }}\n*Action :* {{ $json.action }}\n*Urgence :* {{ $json.urgence }}",
+        "attachments": [],
+        "otherOptions": {}
+      },
+      "notes": "Canal Slack configurable par client. Adapter le channel selon l'organisation."
+    },
+    {
+      "id": "node_wait_escalation",
+      "name": "Attente 30 min — Escalade",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1950, 280],
+      "parameters": {
+        "unit": "minutes",
+        "amount": 30
+      },
+      "notes": "Attente 30 min. Si le commercial n'a pas répondu → escalade au manager."
+    },
+    {
+      "id": "node_check_replied",
+      "name": "Check — Lead contacté ?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2200, 280],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{BASE_ID}}/Leads?filterByFormula=AND(Email%3D'{{ $json.email }}'%2CStatut%3D'Contacté')",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $credentials.airtableApiKey }}" }
+          ]
+        }
+      },
+      "notes": "Vérifie dans le CRM si le statut est passé à 'Contacté'. Sinon → escalade manager."
+    },
+    {
+      "id": "node_escalade_router",
+      "name": "Router — Escalade ?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [2450, 280],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "rules": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.records.length }}",
+                    "rightValue": 0,
+                    "operator": { "type": "number", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "escalade"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "node_escalade_slack",
+      "name": "Slack — Escalade Manager",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [2700, 200],
+      "parameters": {
+        "operation": "post",
+        "channel": "#alerts-manager",
+        "text": "=⚠️ ESCALADE — Lead *{{ $json.score }}* non traité après 30 min\n\n*Nom :* {{ $json.name }}\n*Entreprise :* {{ $json.company }}\n*Téléphone :* {{ $json.phone }}\n\nAction requise immédiatement."
+      },
+      "notes": "Alerte le manager si aucun commercial n'a pris en charge le lead en 30 min."
+    },
+    {
+      "id": "node_nurture_tag",
+      "name": "CRM — Ajouter au nurture",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1450, 500],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.airtable.com/v0/{{BASE_ID}}/Leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $credentials.airtableApiKey }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "records": [
+            {
+              "fields": {
+                "Nom": "={{ $json.name }}",
+                "Email": "={{ $json.email }}",
+                "Téléphone": "={{ $json.phone }}",
+                "Entreprise": "={{ $json.company }}",
+                "Message": "={{ $json.message }}",
+                "Score": "Cold",
+                "Raison IA": "={{ $json.raison }}",
+                "Source": "={{ $json.source }}",
+                "Date": "={{ $json.timestamp }}",
+                "Statut": "Nurture",
+                "Séquence": "email-nurture-cold-j0"
+              }
+            }
+          ]
+        }
+      },
+      "notes": "Tag le lead Cold dans le CRM avec le statut Nurture. Déclenche la séquence email."
+    },
+    {
+      "id": "node_nurture_email_j0",
+      "name": "Email — Nurture J0",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1700, 500],
+      "parameters": {
+        "fromEmail": "contact@{{NOM_DOMAINE}}",
+        "toEmail": "={{ $json.email }}",
+        "subject": "=Bienvenue {{ $json.prenom }} — voici ce que nous faisons pour vous",
+        "emailFormat": "html",
+        "html": "=<p>Bonjour {{ $json.prenom }},</p>\n<p>Merci d'avoir contacté {{NOM_ENTREPRISE}}.</p>\n<p>Nous aidons les entreprises comme la vôtre à automatiser leurs processus répétitifs pour que vos équipes se concentrent sur ce qui compte vraiment.</p>\n<p>Voici 3 résultats concrets obtenus chez nos clients :</p>\n<ul>\n  <li>Temps de réponse lead : de 4h à 60 secondes</li>\n  <li>Volume d'avis Google : ×4 en 30 jours</li>\n  <li>Appels traités 24/7 sans coût supplémentaire</li>\n</ul>\n<p>Je reste disponible pour échanger.</p>\n<p>— L'équipe {{NOM_ENTREPRISE}}</p>"
+      },
+      "notes": "Email de bienvenue J0. Suite de la séquence gérée via un outil d'email automation (Brevo / Resend)."
+    }
+  ],
+  "connections": {
+    "Webhook — Réception formulaire": {
+      "main": [
+        [
+          { "node": "Validation & Anti-spam", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Validation & Anti-spam": {
+      "main": [
+        [
+          { "node": "Réponse immédiate au formulaire", "type": "main", "index": 0 },
+          { "node": "Claude API — Scoring & Qualification", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Claude API — Scoring & Qualification": {
+      "main": [
+        [
+          { "node": "Parser la réponse Claude", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Parser la réponse Claude": {
+      "main": [
+        [
+          { "node": "Router — Hot/Warm vs Cold", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Router — Hot/Warm vs Cold": {
+      "main": [
+        [
+          { "node": "CRM — Créer contact", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "CRM — Ajouter au nurture", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "CRM — Créer contact": {
+      "main": [
+        [
+          { "node": "Twilio — SMS Confirmation Lead", "type": "main", "index": 0 },
+          { "node": "Slack — Alerte Commercial", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Slack — Alerte Commercial": {
+      "main": [
+        [
+          { "node": "Attente 30 min — Escalade", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Attente 30 min — Escalade": {
+      "main": [
+        [
+          { "node": "Check — Lead contacté ?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Check — Lead contacté ?": {
+      "main": [
+        [
+          { "node": "Router — Escalade ?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Router — Escalade ?": {
+      "main": [
+        [
+          { "node": "Slack — Escalade Manager", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "CRM — Ajouter au nurture": {
+      "main": [
+        [
+          { "node": "Email — Nurture J0", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "errorWorkflow": "lead-engine-error-handler"
+  },
+  "meta": {
+    "templateId": "webmind-lead-engine-v1",
+    "version": "1.0.0",
+    "author": "WebMind",
+    "description": "Workflow complet de qualification et routing des leads entrants. Adaptable à tout client avec formulaire web.",
+    "variables_to_configure": [
+      "BASE_ID — ID de la base Airtable client",
+      "LIEN_BOOKING — URL Calendly ou Cal.com",
+      "NOM_ENTREPRISE — Nom du client final",
+      "NOM_DOMAINE — Domaine email expéditeur",
+      "slack_channel_sales — Canal Slack pour les leads qualifiés",
+      "credentials.anthropicApiKey — Clé API Anthropic",
+      "credentials.airtableApiKey — Clé API Airtable",
+      "credentials.twilioPhoneNumber — Numéro Twilio expéditeur"
+    ]
+  }
+}
