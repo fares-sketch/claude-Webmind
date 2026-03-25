@@ -1,10 +1,5 @@
 {
-  "name": "WebMind — Lead Engine",
-  "settings": {
-    "executionOrder": "v1",
-    "saveDataErrorExecution": "all",
-    "saveDataSuccessExecution": "all"
-  },
+  "name": "WebMind — Lead Engine (Memory Enabled)",
   "nodes": [
     {
       "id": "node-webhook",
@@ -15,9 +10,29 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "lead-capture",
-        "responseMode": "responseNode",
-        "options": {}
+        "responseMode": "responseNode"
       }
+    },
+    {
+      "id": "node-read-memory",
+      "name": "Read Memory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [440, 140],
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.MEMORY_API_URL}}/api/memory?key=lead:{{$json.body.email}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.MEMORY_API_KEY}}" }
+          ]
+        },
+        "options": {
+          "allowNoData": true
+        }
+      },
+      "onError": "continueErrorOutput"
     },
     {
       "id": "node-validate",
@@ -26,14 +41,14 @@
       "typeVersion": 2,
       "position": [440, 300],
       "parameters": {
-        "jsCode": "const body = $input.first().json.body ?? $input.first().json;\nconst { name, email, phone, company, message } = body;\nif (!name || !email || !message) throw new Error('Missing required fields: name, email, message');\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!emailRegex.test(email)) throw new Error('Invalid email format');\nif (body.website) throw new Error('Spam detected');\nreturn [{ json: { name, email, phone: phone||'', company: company||'', message } }];"
+        "jsCode": "const body = $input.first().json.body ?? $input.first().json;\nconst { name, email, phone, company, message } = body;\nif (!name || !email || !message) throw new Error('Missing required fields: name, email, message');\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!emailRegex.test(email)) throw new Error('Invalid email format');\nreturn [{ json: { name, email, phone: phone||'', company: company||'', message } }];"
       }
     },
     {
       "id": "node-qualify",
       "name": "AI Lead Qualification",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 4.1,
       "position": [680, 300],
       "parameters": {
         "method": "POST",
@@ -41,14 +56,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
             { "name": "anthropic-version", "value": "2023-06-01" },
             { "name": "content-type", "value": "application/json" }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \"model\": \"claude-haiku-4-5-20251001\", \"max_tokens\": 300, \"messages\": [{ \"role\": \"user\", \"content\": \"B2B lead qualification for a digital automation agency. Reply ONLY with valid JSON: {\\\"score\\\": \\\"Hot|Warm|Cold\\\", \\\"reason\\\": \\\"one sentence\\\", \\\"intent\\\": \\\"one sentence\\\"}\\n\\nHot = clear business need + decision-maker\\nWarm = interest but vague\\nCold = no clear intent\\n\\nName: {{ $json.name }}\\nCompany: {{ $json.company }}\\nMessage: {{ $json.message }}\" }] }"
+        "jsonBody": "={ \"model\": \"claude-3-5-sonnet-20241022\", \"max_tokens\": 300, \"system\": \"Tu es un qualificateur de leads pour WebMind.\\n\\nContexte mémoire du lead :\\n{{ $('Read Memory').first().json.value ?? 'Aucun historique.' }}\", \"messages\": [{ \"role\": \"user\", \"content\": \"Qualifie ce lead (format JSON: {score, reason, intent}):\\nName: {{ $json.name }}\\nCompany: {{ $json.company }}\\nMessage: {{ $json.message }}\" }] }"
       }
     },
     {
@@ -58,7 +73,51 @@
       "typeVersion": 2,
       "position": [920, 300],
       "parameters": {
-        "jsCode": "const content = $input.first().json.content[0].text;\nlet parsed;\ntry { parsed = JSON.parse(content); } catch(e) { parsed = { score: 'Warm', reason: 'AI parse error - manual review needed', intent: 'Unknown' }; }\nconst lead = $('Validate Fields').first().json;\nreturn [{ json: { ...lead, score: parsed.score, reason: parsed.reason, intent: parsed.intent, qualified_at: new Date().toISOString() } }];"
+        "jsCode": "const content = $input.first().json.content[0].text;\nlet parsed;\ntry { parsed = JSON.parse(content); } catch(e) { parsed = { score: 'Warm', reason: 'AI parse error', intent: 'Unknown' }; }\nconst lead = $('Validate Fields').first().json;\nreturn [{ json: { ...lead, score: parsed.score, reason: parsed.reason, intent: parsed.intent, qualified_at: new Date().toISOString() } }];"
+      }
+    },
+    {
+      "id": "node-crm",
+      "name": "CRM — Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1160, 300],
+      "parameters": {
+        "operation": "create",
+        "base": { "__rl": true, "value": "appFknzmZRW97vPCE", "mode": "id" },
+        "table": { "__rl": true, "value": "Leads", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Company": "={{ $json.company }}",
+            "Score": "={{ $json.score }}",
+            "Message": "={{ $json.message }}"
+          }
+        }
+      }
+    },
+    {
+      "id": "node-write-memory",
+      "name": "Write Memory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1400, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.MEMORY_API_URL}}/api/memory",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.MEMORY_API_KEY}}" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"key\": \"lead:{{ $('Validate Fields').first().json.email }}\", \"workflow\": \"lead-engine\", \"value\": { \"lastContact\": \"{{ $now }}\", \"score\": \"{{ $json.score }}\", \"reason\": \"{{ $json.reason }}\" } }"
       }
     },
     {
@@ -66,26 +125,17 @@
       "name": "Route by Score",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
-      "position": [1160, 300],
+      "position": [1640, 300],
       "parameters": {
         "mode": "rules",
         "rules": {
           "values": [
             {
               "conditions": {
-                "options": { "caseSensitive": false },
                 "conditions": [{ "leftValue": "={{ $json.score }}", "rightValue": "Cold", "operator": { "type": "string", "operation": "notEquals" } }]
               },
               "renameOutput": true,
               "outputKey": "Hot_or_Warm"
-            },
-            {
-              "conditions": {
-                "options": { "caseSensitive": false },
-                "conditions": [{ "leftValue": "={{ $json.score }}", "rightValue": "Cold", "operator": { "type": "string", "operation": "equals" } }]
-              },
-              "renameOutput": true,
-              "outputKey": "Cold"
             }
           ]
         }
@@ -96,35 +146,12 @@
       "name": "Slack Sales Alert",
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.2,
-      "position": [1400, 140],
+      "position": [1880, 140],
       "parameters": {
         "resource": "message",
         "operation": "post",
         "channel": { "__rl": true, "mode": "name", "value": "sales" },
-        "text": "=New lead *{{ $json.score }}* - {{ $json.name }} ({{ $json.company }})\nEmail: {{ $json.email }} | Phone: {{ $json.phone }}\nIntent: {{ $json.intent }}\nMessage: {{ $json.message }}\nQualified at: {{ $json.qualified_at }}"
-      }
-    },
-    {
-      "id": "node-sms",
-      "name": "SMS Confirmation Twilio",
-      "type": "n8n-nodes-base.twilio",
-      "typeVersion": 1,
-      "position": [1400, 360],
-      "parameters": {
-        "operation": "send",
-        "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
-        "to": "={{ $json.phone }}",
-        "message": "=Bonjour {{ $json.name }}, merci pour votre interet ! Notre equipe vous contacte sous 60 min. Reservez : https://cal.com/webmind"
-      }
-    },
-    {
-      "id": "node-nurture",
-      "name": "Cold Tag Nurture",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1400, 560],
-      "parameters": {
-        "jsCode": "const lead = $input.first().json;\nreturn [{ json: { ...lead, nurture: true, nurture_start: new Date().toISOString() } }];"
+        "text": "=New lead *{{ $json.score }}* - {{ $json.name }} ({{ $json.company }})"
       }
     },
     {
@@ -132,7 +159,7 @@
       "name": "Webhook Response",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1640, 360],
+      "position": [1880, 460],
       "parameters": {
         "respondWith": "json",
         "responseBody": "={ \"success\": true, \"message\": \"Lead received\" }"
@@ -141,6 +168,9 @@
   ],
   "connections": {
     "Lead Capture Webhook": {
+      "main": [[{ "node": "Read Memory", "type": "main", "index": 0 }]]
+    },
+    "Read Memory": {
       "main": [[{ "node": "Validate Fields", "type": "main", "index": 0 }]]
     },
     "Validate Fields": {
@@ -150,23 +180,21 @@
       "main": [[{ "node": "Parse AI Score", "type": "main", "index": 0 }]]
     },
     "Parse AI Score": {
+      "main": [[{ "node": "CRM — Airtable", "type": "main", "index": 0 }]]
+    },
+    "CRM — Airtable": {
+      "main": [[{ "node": "Write Memory", "type": "main", "index": 0 }]]
+    },
+    "Write Memory": {
       "main": [[{ "node": "Route by Score", "type": "main", "index": 0 }]]
     },
     "Route by Score": {
       "main": [
-        [
-          { "node": "Slack Sales Alert", "type": "main", "index": 0 },
-          { "node": "SMS Confirmation Twilio", "type": "main", "index": 0 }
-        ],
-        [
-          { "node": "Cold Tag Nurture", "type": "main", "index": 0 }
-        ]
+        [{ "node": "Slack Sales Alert", "type": "main", "index": 0 }],
+        [{ "node": "Webhook Response", "type": "main", "index": 0 }]
       ]
     },
     "Slack Sales Alert": {
-      "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
-    },
-    "Cold Tag Nurture": {
       "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
     }
   }
