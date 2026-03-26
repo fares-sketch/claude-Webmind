@@ -1,0 +1,280 @@
+{
+  "name": "WebMind — Prospection Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "prospection-engine",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Prospection Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 400],
+      "webhookId": "prospect-engine-001"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract prospects array and campaign metadata\nconst body = $input.first().json.body ?? $input.first().json;\nconst prospects = body.prospects;\nconst campaign = body.campaign || 'Unknown';\nconst icp_criteria = body.icp_criteria || '';\n\nif (!prospects || !Array.isArray(prospects) || prospects.length === 0) {\n  throw new Error('Missing or empty prospects array');\n}\n\n// Return each prospect as a separate item for batch processing\nreturn prospects.map(p => ({\n  json: {\n    first_name: p.first_name || '',\n    last_name: p.last_name || '',\n    title: p.title || '',\n    company: p.company || '',\n    company_size: p.company_size || '',\n    industry: p.industry || '',\n    email: p.email || '',\n    phone: p.phone || '',\n    linkedin_url: p.linkedin_url || '',\n    location: p.location || '',\n    campaign: p.campaign || campaign,\n    icp_criteria: icp_criteria,\n    received_at: new Date().toISOString()\n  }\n}));"
+      },
+      "id": "node-parse",
+      "name": "Parse Prospects",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Score each prospect using Claude Haiku API\n// This node processes items one by one, preserving prospect data\nconst prospect = $input.first().json;\n\nconst prompt = `Tu es un expert en qualification de prospects B2B pour WebMind, une agence d'automatisation IA.\n\nNotre ICP (Ideal Customer Profile) :\n- Poste : CEO, DG, Directeur Commercial, Directeur Operations, COO\n- Entreprise : PME B2B francaise, 5 a 100 employes\n- Secteur : tous secteurs B2B (services, tech, industrie, conseil, immobilier, sante B2B)\n- Probleme cible : processus manuels repetitifs, leads non suivis, appels manques\n\nProspect a evaluer :\nPrenom : ${prospect.first_name}\nNom : ${prospect.last_name}\nTitre : ${prospect.title}\nEntreprise : ${prospect.company}\nTaille : ${prospect.company_size} employes\nSecteur : ${prospect.industry}\nLocalisation : ${prospect.location}\n\nRetourne uniquement ce JSON :\n{\"score\": \"Hot\" | \"Warm\" | \"Cold\", \"raison\": \"string (max 2 phrases, en francais)\"}\n\nCriteres :\n- Hot = decideur confirme (CEO/DG/Dir), PME B2B France, taille dans la cible\n- Warm = decideur probable mais info incomplete, ou taille legerement hors cible\n- Cold = pas decideur, hors France, hors ICP, trop grande/petite entreprise`;\n\ntry {\n  const response = await $helpers.httpRequest({\n    method: 'POST',\n    url: 'https://api.anthropic.com/v1/messages',\n    headers: {\n      'x-api-key': $env.ANTHROPIC_API_KEY,\n      'anthropic-version': '2023-06-01',\n      'content-type': 'application/json'\n    },\n    body: JSON.stringify({\n      model: 'claude-haiku-4-5-20251001',\n      max_tokens: 300,\n      messages: [{ role: 'user', content: prompt }]\n    })\n  });\n\n  const content = response.content[0].text;\n  let parsed;\n  try {\n    let cleanContent = content.trim();\n    if (cleanContent.startsWith('```')) {\n      cleanContent = cleanContent.replace(/^```(?:json)?\\n?/, '').replace(/\\n?```$/, '');\n    }\n    parsed = JSON.parse(cleanContent);\n  } catch(e) {\n    parsed = { score: 'Warm', raison: 'Erreur parsing IA - review manuel necessaire' };\n  }\n\n  return [{ json: {\n    ...prospect,\n    score: parsed.score || 'Warm',\n    raison: parsed.raison || 'Non qualifie automatiquement'\n  } }];\n\n} catch(e) {\n  // Fallback if Claude API fails\n  return [{ json: {\n    ...prospect,\n    score: 'Warm',\n    raison: 'API indisponible - qualification manuelle requise'\n  } }];\n}"
+      },
+      "id": "node-ai-score",
+      "name": "Claude Haiku Scoring",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": "Cold",
+                    "operator": { "type": "string", "operation": "notEquals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Hot_or_Warm"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.score }}",
+                    "rightValue": "Cold",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Cold"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-router",
+      "name": "Route by Score",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [920, 400]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": { "__rl": true, "value": "appFknzmZRW97vPCE", "mode": "id" },
+        "table": { "__rl": true, "value": "Prospects", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Prenom": "={{ $json.first_name }}",
+            "Nom": "={{ $json.last_name }}",
+            "Titre": "={{ $json.title }}",
+            "Entreprise": "={{ $json.company }}",
+            "Taille": "={{ $json.company_size }}",
+            "Secteur": "={{ $json.industry }}",
+            "Email": "={{ $json.email }}",
+            "Telephone": "={{ $json.phone }}",
+            "LinkedIn": "={{ $json.linkedin_url }}",
+            "Localisation": "={{ $json.location }}",
+            "Score": "={{ $json.score }}",
+            "Raison": "={{ $json.raison }}",
+            "Campagne": "={{ $json.campaign }}",
+            "Source": "Apollo MCP",
+            "Date": "={{ $json.received_at }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": { "typecast": true }
+      },
+      "id": "node-airtable-hot",
+      "name": "Airtable — Hot/Warm",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1160, 240],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "8R0QX9LyMuQ7EfzD",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": { "__rl": true, "value": "appFknzmZRW97vPCE", "mode": "id" },
+        "table": { "__rl": true, "value": "Prospects", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Prenom": "={{ $json.first_name }}",
+            "Nom": "={{ $json.last_name }}",
+            "Titre": "={{ $json.title }}",
+            "Entreprise": "={{ $json.company }}",
+            "Taille": "={{ $json.company_size }}",
+            "Secteur": "={{ $json.industry }}",
+            "Email": "={{ $json.email }}",
+            "Telephone": "={{ $json.phone }}",
+            "LinkedIn": "={{ $json.linkedin_url }}",
+            "Localisation": "={{ $json.location }}",
+            "Score": "={{ $json.score }}",
+            "Raison": "={{ $json.raison }}",
+            "Campagne": "={{ $json.campaign }}",
+            "Source": "Apollo MCP",
+            "Date": "={{ $json.received_at }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": { "typecast": true }
+      },
+      "id": "node-airtable-cold",
+      "name": "Airtable — Cold",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1160, 560],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "8R0QX9LyMuQ7EfzD",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": { "__rl": true, "value": "leads-chauds", "mode": "name" },
+        "text": "=:dart: *Nouveau prospect {{ $json.fields?.Score ?? $json.score }}*\n\n*{{ $json.fields?.Prenom ?? $json.first_name }} {{ $json.fields?.Nom ?? $json.last_name }}* — {{ $json.fields?.Titre ?? $json.title }}\n:office: {{ $json.fields?.Entreprise ?? $json.company }} ({{ $json.fields?.Taille ?? $json.company_size }} emp.) | {{ $json.fields?.Secteur ?? $json.industry }}\n:round_pushpin: {{ $json.fields?.Localisation ?? $json.location }}\n\n:email: {{ $json.fields?.Email ?? $json.email }} | :phone: {{ $json.fields?.Telephone ?? $json.phone }}\n:link: {{ $json.fields?.LinkedIn ?? $json.linkedin_url }}\n\n*Score :* {{ $json.fields?.Score ?? $json.score }} — {{ $json.fields?.Raison ?? $json.raison }}\n*Campagne :* {{ $json.fields?.Campagne ?? $json.campaign }}\n*Source :* Apollo MCP",
+        "otherOptions": {}
+      },
+      "id": "node-slack-hot",
+      "name": "Slack — Hot/Warm Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1400, 240],
+      "credentials": {
+        "slackApi": {
+          "id": "2A4Lj5Qm3bQzB9c0",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": { "__rl": true, "value": "leads-froids", "mode": "name" },
+        "text": "=:snowflake: *Lead froid :* {{ $json.fields?.Prenom ?? $json.first_name }} {{ $json.fields?.Nom ?? $json.last_name }}, {{ $json.fields?.Titre ?? $json.title }} @ {{ $json.fields?.Entreprise ?? $json.company }}\n{{ $json.fields?.Raison ?? $json.raison }}\n*Campagne :* {{ $json.fields?.Campagne ?? $json.campaign }}",
+        "otherOptions": {}
+      },
+      "id": "node-slack-cold",
+      "name": "Slack — Cold Log",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1400, 560],
+      "credentials": {
+        "slackApi": {
+          "id": "2A4Lj5Qm3bQzB9c0",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate results by referencing the Claude Scoring node output directly\n// This avoids data loss from Airtable/Slack response overwriting prospect data\nconst allScored = $('Claude Haiku Scoring').all();\n\nlet hot = 0, warm = 0, cold = 0;\nfor (const item of allScored) {\n  const score = (item.json.score || '').toLowerCase();\n  if (score === 'hot') hot++;\n  else if (score === 'warm') warm++;\n  else cold++;\n}\n\nreturn [{ json: {\n  success: true,\n  processed: allScored.length,\n  hot: hot,\n  warm: warm,\n  cold: cold,\n  message: `${allScored.length} prospects traites: ${hot} Hot, ${warm} Warm, ${cold} Cold`\n} }];"
+      },
+      "id": "node-aggregate",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1640, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "node-respond",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1880, 400]
+    }
+  ],
+  "connections": {
+    "Prospection Webhook": {
+      "main": [
+        [{ "node": "Parse Prospects", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Prospects": {
+      "main": [
+        [{ "node": "Claude Haiku Scoring", "type": "main", "index": 0 }]
+      ]
+    },
+    "Claude Haiku Scoring": {
+      "main": [
+        [{ "node": "Route by Score", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route by Score": {
+      "main": [
+        [{ "node": "Airtable — Hot/Warm", "type": "main", "index": 0 }],
+        [{ "node": "Airtable — Cold", "type": "main", "index": 0 }]
+      ]
+    },
+    "Airtable — Hot/Warm": {
+      "main": [
+        [{ "node": "Slack — Hot/Warm Alert", "type": "main", "index": 0 }]
+      ]
+    },
+    "Airtable — Cold": {
+      "main": [
+        [{ "node": "Slack — Cold Log", "type": "main", "index": 0 }]
+      ]
+    },
+    "Slack — Hot/Warm Alert": {
+      "main": [
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }]
+      ]
+    },
+    "Slack — Cold Log": {
+      "main": [
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [{ "node": "Webhook Response", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "pinData": {},
+  "active": false
+}
