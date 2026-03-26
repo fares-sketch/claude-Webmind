@@ -77,7 +77,7 @@ Follow this order on every project — do not skip steps:
 | Agency site | https://claude-webmind.vercel.app (live) |
 | Custom domain | webmindlab.tech — DNS pending Cloudflare propagation |
 | GitHub repo | https://github.com/fares-sketch/claude-Webmind |
-| n8n public (temp) | https://null-suppose-mask-complete.trycloudflare.com (changes on restart) |
+| n8n public (temp) | https://typing-relations-scales-faqs.trycloudflare.com (changes on restart) |
 | n8n public (target) | https://n8n.webmindlab.tech (to configure after DNS propagates) |
 
 ---
@@ -140,6 +140,14 @@ Details: `@systems/lead-engine.md`, `@systems/call-engine.md`, `@systems/review-
 - [ ] Update `N8N_CONTACT_WEBHOOK` in `.env.local` and Vercel env vars
 - [ ] Build Call Engine workflow in n8n
 - [ ] Build Review Engine workflow in n8n
+
+---
+
+## Git & Deploy
+
+- **Git user.email** : `fares@webmindlab.tech` (même email pour tout — GitHub, Vercel, Cloudflare)
+- **CRITIQUE** : Si l'email du commit est différent, Vercel bloque le deploy (`TEAM_ACCESS_REQUIRED`)
+- Fix : `git config user.email "fares@webmindlab.tech"` + amend + force push
 
 ---
 
