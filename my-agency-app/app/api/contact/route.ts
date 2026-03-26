@@ -9,20 +9,20 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json()
 
-    const res = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            name: body.name,
-            email: body.email,
-            company: body.company,
-            message: body.message,
-            submittedAt: new Date().toISOString(),
-        }),
-    })
-
-    if (!res.ok) {
-        return Response.json({ error: 'Webhook delivery failed' }, { status: 502 })
+    try {
+        await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: body.name,
+                email: body.email,
+                company: body.company,
+                message: body.message,
+                submittedAt: new Date().toISOString(),
+            }),
+        })
+    } catch (err) {
+        console.error('[Contact] Webhook error:', err)
     }
 
     return Response.json({ ok: true })

@@ -7,25 +7,25 @@ import { Zap, Target, TrendingUp, Cpu } from 'lucide-react'
 const advantages = [
     {
         title: "Immersion & Engagement",
-        description: "Les interfaces 3D capturent l'attention 5x plus longtemps que les sites statiques. Le robot interactif n'est pas qu'un gadget, c'est un signal fort de modernité qui réduit instantanément votre taux de rebond.",
+        description: "Le robot interactif capte l'attention en 3 secondes et réduit instantanément votre taux de rebond.",
         icon: Zap,
         color: "text-zinc-100"
     },
     {
         title: "Autorité Technologique",
-        description: "Pour vendre des solutions IA, il faut incarner l'IA. Cette technologie démontre visuellement votre maîtrise technique avant même le premier appel client.",
+        description: "Pour vendre de l'IA, il faut incarner l'IA — visuellement, avant même le premier appel.",
         icon: Cpu,
         color: "text-zinc-100"
     },
     {
         title: "Conversion Haut de Gamme",
-        description: "Une expérience sensorielle poussée augmente la perception de valeur de vos services. Ce qui est rare et complexe visuellement est perçu comme premium et d'élite.",
+        description: "Ce qui est rare et complexe visuellement est perçu comme premium. Vos prix s'en ressentent.",
         icon: Target,
         color: "text-zinc-100"
     },
     {
         title: "Avantage Concurrentiel",
-        description: "99% de vos concurrents utilisent des templates basiques. En utilisant du 3D temps-réel, vous vous placez instantanément dans le top 1% du marché.",
+        description: "99% de vos concurrents utilisent des templates basiques. Vous êtes dans le top 1%.",
         icon: TrendingUp,
         color: "text-zinc-100"
     }
