@@ -75,10 +75,10 @@ Follow this order on every project — do not skip steps:
 | Item | URL / Status |
 |---|---|
 | Agency site | https://claude-webmind.vercel.app (live) |
-| Custom domain | webmindlab.tech — DNS pending Cloudflare propagation |
+| Custom domain | https://www.webmindlab.com — LIVE |
 | GitHub repo | https://github.com/fares-sketch/claude-Webmind |
 | n8n public (temp) | https://typing-relations-scales-faqs.trycloudflare.com (changes on restart) |
-| n8n public (target) | https://n8n.webmindlab.tech (to configure after DNS propagates) |
+| n8n public (target) | https://n8n.webmindlab.com (to configure) |
 
 ---
 
@@ -128,15 +128,14 @@ Details: `@systems/lead-engine.md`, `@systems/call-engine.md`, `@systems/review-
 - Waalaxy sequences: `prompts/waalaxy-sequences.md`
 - Images: to generate via ChatGPT DALL·E
 - ICP: CEO/Dir. Commercial, PME 5–100 employees, B2B France
-- Funnel: LinkedIn → webmindlab.tech → Lead Engine → Airtable + Slack
+- Funnel: LinkedIn → webmindlab.com → Lead Engine → Airtable + Slack
 
 ---
 
 ## Pending Infrastructure Tasks
 
-- [ ] Update nameservers in Manus registrar → `cesar.ns.cloudflare.com` + `rose.ns.cloudflare.com`
-- [ ] After DNS propagates: run `cloudflared tunnel create n8n-webmind`
-- [ ] Add CNAME `n8n → <tunnel-id>.cfargotunnel.com` in Cloudflare
+- [ ] Run `cloudflared tunnel create n8n-webmind`
+- [ ] Add CNAME `n8n → <tunnel-id>.cfargotunnel.com` in Cloudflare (webmindlab.com)
 - [ ] Update `N8N_CONTACT_WEBHOOK` in `.env.local` and Vercel env vars
 - [ ] Build Call Engine workflow in n8n
 - [ ] Build Review Engine workflow in n8n
