@@ -155,11 +155,26 @@
       }
     },
     {
+      "id": "node-email-agency",
+      "name": "Agency Email Alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1880, 300],
+      "parameters": {
+        "to": "fares@webmindlab.tech",
+        "subject": "=New Lead: {{ $json.name }} — ({{ $json.score }})",
+        "text": "=Détails du lead :\n\n- Nom: {{ $json.name }}\n- Email: {{ $json.email }}\n- Entreprise: {{ $json.company }}\n- Message: {{ $json.message }}\n\n--- AI Analysis ---\n- Score: {{ $json.score }}\n- Raison: {{ $json.reason }}\n- Intention: {{ $json.intent }}\n\nCeci est une notification automatique de WebMind Lead Engine.",
+        "options": {
+          "appendAttachements": []
+        }
+      }
+    },
+    {
       "id": "node-respond",
       "name": "Webhook Response",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1880, 460],
+      "position": [2120, 304],
       "parameters": {
         "respondWith": "json",
         "responseBody": "={ \"success\": true, \"message\": \"Lead received\" }"
@@ -190,11 +205,17 @@
     },
     "Route by Score": {
       "main": [
-        [{ "node": "Slack Sales Alert", "type": "main", "index": 0 }],
+        [
+          { "node": "Slack Sales Alert", "type": "main", "index": 0 },
+          { "node": "Agency Email Alert", "type": "main", "index": 0 }
+        ],
         [{ "node": "Webhook Response", "type": "main", "index": 0 }]
       ]
     },
     "Slack Sales Alert": {
+      "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
+    },
+    "Agency Email Alert": {
       "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
     }
   }
