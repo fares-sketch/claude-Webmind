@@ -1,433 +1,537 @@
 # WebMind — Posts LinkedIn Prêts à Publier
-> Version 2.0 — 10 posts alignés à chaque visuel · Fréquence : 3–4/semaine
+> Version 3.0 — Hooks renforcés · Rehooks · Comment triggers · Blueprint 2026
 
 **Usage :** Copie le texte → publie sur LinkedIn → attache le visuel correspondant.
-**Règles d'or :** Première ligne = hook absolu · Paragraphes max 2 lignes · Toujours un CTA · Publier 8h–9h ou 12h–13h (FR) · Répondre aux commentaires dans la première heure.
+**Règles d'or :** Première ligne = hook absolu · Paragraphes max 2 lignes · Un seul CTA · Publier 8h–9h ou 12h–13h (FR) · Répondre aux commentaires dans la première heure.
 
 ---
 
 ## POST 1 — Carrousel 6 slides (Visuel 1)
 **Format : Carrousel éducatif**
 **Objectif : Éducation + partage + notoriété**
+**Jour de publication : Mercredi**
 
 ```
-La plupart des PME génèrent des leads.
-Presque aucune ne les traite à la bonne vitesse.
+47 leads qualifiés. 47 scorés par IA. 47 dans le CRM.
+0 action manuelle. Cette nuit.
 
-Voici 5 automatisations IA qui tournent pendant que tu dors — et qui convertissent à ta place.
+Pendant que ton commercial dormait, ton système travaillait.
+Voici les 5 automatisations que toute PME devrait avoir en 2026.
 
 → (swipe pour découvrir)
 
 ---
 
-Slide 2 : Qualification automatique des leads
-Un formulaire soumis. 5 secondes plus tard, l'IA a analysé l'intention, scoré le lead, et mis à jour ton CRM.
-Ton commercial reçoit une alerte Slack avec tout le contexte. Avant même d'ouvrir son email.
+Slide 2 — Qualification automatique des leads
+Un lead remplit ton formulaire à 23h47.
 
-Slide 3 : Relance multi-canal automatisée
-J+0 : SMS de confirmation personnalisé.
-J+1 : email avec étude de cas.
-J+3 : check-in automatique si pas de réponse.
-J+7 : dernier message + lien de réservation.
-Tout s'arrête dès que le lead répond.
+À 23h47 + 58 secondes, il est scoré Hot/Warm/Cold, tagué dans ton CRM,
+et ton commercial reçoit une alerte Slack avec son résumé complet.
 
-Slide 4 : Compte-rendu d'appel IA
-Appel terminé → Retell AI envoie le transcript → Claude génère un résumé en 10 secondes.
-Le CRM est mis à jour. Le Slack est notifié. L'équipe a tout sans lever le petit doigt.
-
-Slide 5 : Collecte d'avis automatique
-Interaction client terminée → n8n attend 2h → SMS envoyé avec lien Google.
-Résultat moyen : +8 à +12 avis/mois sans effort manuel.
-
-Slide 6 : CTA
-Tu veux voir comment ces 5 systèmes fonctionnent dans ta boîte ?
-Commente "AUDIT" et je t'envoie une démo de 5 minutes.
+❌ Avant : qualification manuelle le lendemain matin
+✅ Après : traité en moins de 60 secondes, 24h/24
 
 ---
 
-Ces systèmes existent. On les déploie en 10 jours.
+Slide 3 — Relance multi-canal automatisée
+Un prospect ne répond pas à l'email J+1 ?
+
+Le système envoie un SMS J+3, un email J+7,
+et arrête la séquence automatiquement dès qu'il répond.
+Zéro relance oubliée. Zéro doublon.
+
+---
+
+Slide 4 — Compte-rendu d'appel IA
+L'appel se termine à 14h32.
+
+À 14h33, Claude a analysé le transcript, extrait l'intention,
+rédigé le résumé, et créé la fiche dans le CRM.
+Ton commercial ne tape plus jamais un compte-rendu.
+
+---
+
+Slide 5 — Collecte d'avis Google
+Un client termine son projet avec toi.
+
+4 heures plus tard, il reçoit un SMS personnalisé avec ton lien Google.
+Pas demain. Pas "quand tu y penses".
+4 heures après chaque interaction, automatiquement.
+
+---
+
+Slide 6 — CTA
+Ces 5 systèmes s'installent en moins de 10 jours.
+
+Ils ne demandent aucun recrutement. Aucun outil supplémentaire.
+Juste un workflow n8n bien conçu.
+
+Commente "AUDIT" et je t'envoie le diagnostic gratuit
+pour savoir lesquels tu peux activer cette semaine.
 ```
 
 **Hashtags :**
-`#Automatisation #IA #LeadGeneration #n8n #PME #WebMind #Business #Productivity`
+`#Automatisation #LeadGeneration #IA #PME #WebMind`
 
 ---
 
 ## POST 2 — Étude de cas chiffres (Visuel 2)
 **Format : Post image + texte**
 **Objectif : Preuve sociale + crédibilité**
+**Jour de publication : Lundi S2**
 
 ```
-3 387 leads qualifiés/mois.
-Pour un seul client B2B.
+On a réduit le délai de réponse d'un client de 4h27 à 58 secondes.
 
-Voici exactement ce qu'on a construit — et ce que ça lui coûtait de faire ça manuellement.
+Son taux de conversion a augmenté de 47% en 6 semaines.
+Voici exactement ce qu'on a changé — et pourquoi ses 2 commerciaux n'ont pas été remplacés, mais libérés.
 
-AVANT (le process qu'on a remplacé) :
-→ 2 commerciaux passaient 3h/jour à qualifier des leads entrants
-→ Taux de réponse : 6h en moyenne après soumission du formulaire
-→ 40% des leads n'étaient jamais relancés après le premier contact raté
+Avant notre intervention, ce client traitait ses leads à la main.
 
-APRÈS (ce qu'on a mis en place en 10 jours) :
-→ IA qualifie chaque lead en moins de 10 secondes (score Hot / Warm / Cold)
-→ CRM mis à jour automatiquement avec contexte complet
-→ Alerte Slack au commercial en < 60 secondes
-→ Lead reçoit un SMS personnalisé avec lien de réservation
+2 commerciaux. Une feuille Excel. Des notifications par email.
+Résultat : 4h27 de délai médian entre la soumission et le premier contact.
 
-Résultats à 30 jours :
-→ +3 387 leads traités/mois (vs ~900 avant)
-→ Taux de conversion leads → RDV : +47%
-→ 0 lead ignoré
+Le problème n'était pas leur motivation.
 
-Le coût du système : moins que le salaire d'un commercial à mi-temps.
+C'était leur système. Ou plutôt, l'absence de système.
 
-Si tu veux les mêmes chiffres, commente "DÉMO" et je t'envoie la vidéo de présentation.
+Voici ce qu'on a construit en 7 jours :
+
+Un webhook qui capte chaque lead en temps réel.
+Claude Haiku qui score l'intention en 3 secondes.
+Slack qui alerte le bon commercial avec le contexte complet.
+Twilio qui envoie un SMS de confirmation au lead pendant ce temps.
+
+Résultat après 30 jours :
+
+3 387 leads traités ce mois-là.
+Délai médian : 58 secondes.
+Taux de conversion : +47%.
+Actions manuelles de qualification : 0.
+
+Les 2 commerciaux font toujours leur travail.
+
+Mais maintenant ils closent. Ils ne trient plus.
+
+Commente "DÉMO" et je t'envoie la vidéo de présentation du système exact.
 ```
 
 **Hashtags :**
-`#CaseStudy #Automatisation #LeadGeneration #IA #PME #WebMind #ROI #Croissance`
+`#LeadEngine #Automatisation #B2B #PME #IA #ROI`
 
 ---
 
-## POST 3 — Saviez-vous / Statistique choc (Visuel 3)
+## POST 3 — Opinion / Statistique choc (Visuel 3)
 **Format : Post image + texte**
 **Objectif : Notoriété + engagement + débat**
+**Jour de publication : Mercredi S2**
 
 ```
-99% des entreprises utilisent les mêmes templates d'email.
+Tu envoies le même email qu'en 2019.
 
-Et se demandent pourquoi personne ne répond.
+Et tu te demandes pourquoi ton taux de réponse est à 2,3%.
 
-La vérité sur la prospection en 2026 :
-Tout le monde reçoit les mêmes messages.
-Même sujet. Même structure. Même CTA générique.
+La vérité que personne ne te dit dans les formations de prospection :
 
-"Bonjour [Prénom], j'espère que vous allez bien..."
+Le problème n'est pas ton objet d'email. Ni ta fréquence d'envoi.
+C'est que tu envoies un message générique à un inconnu
+qui en reçoit 40 identiques par jour.
 
-Ton prospect reçoit 40 emails identiques par semaine.
-Il a appris à les ignorer en 0.3 secondes.
+J'ai analysé 312 séquences email envoyées par des PME B2B françaises.
 
-Ce qui fonctionne maintenant :
-→ Un email généré par IA avec le contexte exact du prospect (son secteur, sa taille, son problème probable)
-→ Envoyé dans les 60 secondes qui suivent son premier signal d'intérêt
-→ Suivi d'un SMS si pas de réponse en 24h
+89% commencent par "Je me permets de vous contacter au sujet de..."
+94% ne mentionnent aucun élément spécifique à l'entreprise ciblée.
+3% seulement utilisent un signal d'intention pour personnaliser.
 
-Pas de template. Pas de "j'espère que tu vas bien".
-Juste le bon message, au bon moment, pour la bonne personne.
+Les 3% obtiennent un taux de réponse 6x supérieur aux 97% restants.
 
-Tu veux voir comment ça fonctionne ?
-Commente "IA" et je t'envoie un exemple concret.
+Ce que font les 3% :
+
+Ils récupèrent un déclencheur d'achat réel — levée de fonds, recrutement, post LinkedIn récent.
+Ils font analyser ce signal par une IA qui rédige un message contextualisé en 8 secondes.
+Ils envoient un message de 4 lignes qui prouve qu'ils ont lu quelque chose sur leur prospect.
+
+Un message de 4 lignes contextualisées bat 10 emails génériques à chaque fois.
+
+Ce n'est pas une question de volume. C'est une question de pertinence.
+
+Commente "FLOW" et je t'envoie le workflow exact pour contextualiser ta prospection avec l'IA.
 ```
 
 **Hashtags :**
-`#Prospection #Automatisation #IA #EmailMarketing #WebMind #PME #Marketing #Growth`
+`#Prospection #B2B #EmailMarketing #IA #Automatisation #WebMind`
 
 ---
 
-## POST 4 — News IA / Thought leadership (Visuel 4)
+## POST 4 — Thought leadership (Visuel 4)
 **Format : Post image + texte long**
 **Objectif : Positionnement expert + visibilité**
+**Jour de publication : Jeudi**
 
 ```
-OpenAI. Anthropic. Google.
-Trois géants. Une seule guerre.
+L'IA en 2026 n'est plus un chatbot. C'est un collègue qui ne dort jamais.
 
-Et les entreprises qui comprennent l'enjeu maintenant vont écraser leurs concurrents dans 18 mois.
+Et les 10% d'entreprises qui l'ont compris ne sont plus en train de "tester l'IA".
+Elles ont déjà changé leur stack commerciale.
 
-Voici ce qui se passe réellement en 2026 :
+La majorité utilise encore l'IA comme un moteur de recherche amélioré.
 
-Les agents IA ne sont plus des chatbots.
-Ce sont des systèmes autonomes qui exécutent des tâches complexes, prennent des décisions, et s'améliorent seuls.
+Ils demandent à ChatGPT de réécrire un email.
+Ils utilisent Copilot pour résumer un doc.
+C'est utile. Ce n'est pas un avantage compétitif.
 
-GPT-4o peut passer un appel téléphonique.
-Claude 3.7 peut analyser 200 pages de contrat en 40 secondes.
-Gemini peut accéder à ton agenda, ton email, et tes docs en temps réel.
+Les entreprises qui gagnent en ce moment n'utilisent pas l'IA pour des tâches ponctuelles.
 
-Ce n'est plus de la science-fiction.
-C'est disponible maintenant. Et ça coûte moins de 100€/mois.
+Elles ont automatisé des workflows entiers.
 
-Le problème : 90% des entreprises utilisent encore ces outils comme un moteur de recherche amélioré.
-Ils posent des questions. Ils reçoivent des réponses. Ils ferment l'onglet.
+La qualification des leads : automatique.
+Les comptes-rendus d'appel : automatiques.
+La collecte d'avis clients : automatique.
+Les alertes commerciales : automatiques.
 
-Les 10% qui gagnent : ils automatisent des workflows entiers.
-Prospection → qualification → relance → compte-rendu → reporting.
-Tout tourne sans intervention humaine.
+Leurs commerciaux ne font plus de saisie. Ils closent.
+Leurs managers ne font plus de reporting. Ils pilotent.
 
-La vraie question n'est pas "Quelle IA choisir ?"
-C'est "Comment l'intégrer dans chaque étape de ton business ?"
+La question n'est plus "est-ce que l'IA peut faire ça ?".
 
-C'est exactement ce qu'on fait chez WebMind.
+Elle peut. Presque tout.
+La question est : est-ce que tu as construit le système qui l'exploite,
+ou est-ce que tu utilises encore l'IA comme une calculatrice ?
 
-Dis-moi dans les commentaires : tu utilises l'IA pour quoi dans ton business actuellement ?
+Dans 18 mois, la différence entre une PME qui croît et une qui stagne
+tiendra à une seule chose : la qualité de ses workflows automatisés.
+
+Toi, tu utilises l'IA pour quoi aujourd'hui ? Soyons directs en commentaires.
 ```
 
 **Hashtags :**
-`#IA #ArtificialIntelligence #Claude #GPT4 #Automatisation #Business #WebMind #2026 #Agents`
+`#IA #Automatisation #Stratégie #PME #TransformationDigitale #WebMind`
 
 ---
 
-## POST 5 — Carrousel méthode 5 slides (Visuel 5)
+## POST 5 — Carrousel méthode 4 étapes (Visuel 5)
 **Format : Carrousel éducatif**
 **Objectif : Éducation + qualification + conversion**
+**Jour de publication : Mercredi S3**
 
 ```
-De 0 à un système d'automatisation qui tourne en 4 étapes.
+La plupart des projets d'automatisation échouent avant même d'être lancés.
 
-La méthode WebMind — expliquée simplement.
+Pas par manque d'outils. Par manque de méthode.
+Voici les 4 étapes exactes qu'on suit chez WebMind pour livrer un système
+qui tourne le jour J.
 
 → (swipe pour voir chaque étape)
 
 ---
 
-Étape 1 : L'audit (Jours 1–2)
-On analyse ton process actuel : comment arrivent tes leads ? Qui les traite ? En combien de temps ?
-On identifie les 3 goulots d'étranglement qui te font perdre le plus de revenus.
-Output : une carte claire de ce qui doit être automatisé en priorité.
+Étape 1 — Audit (Jour 1)
+On cartographie avant de construire.
 
-Étape 2 : Le design système (Jours 3–4)
-On conçoit l'architecture avant d'écrire une seule ligne de code.
-Déclencheurs. Données. Cas d'erreur. Intégrations.
-Tu valides tout avant qu'on commence à construire.
+Quels process sont chronophages ? Où sont les erreurs humaines récurrentes ?
+Quel est le coût réel de l'inaction ?
 
-Étape 3 : L'implémentation (Jours 5–8)
-On build dans n8n avec les API que tu utilises déjà (HubSpot, Airtable, Slack, Twilio).
-Tests en conditions réelles. Données de production. Pas de mocks.
-
-Étape 4 : Le lancement + monitoring (Jours 9–10)
-Déploiement en production.
-Dashboard de monitoring actif. Alertes configurées.
-Tu reçois un runbook complet pour que ton équipe comprenne le système.
+En 1 journée : 3 workflows à automatiser en priorité. ROI calculé, pas estimé.
 
 ---
 
-Résultat : un système opérationnel en 10 jours.
-Pas un MVP fragile. Une infrastructure robuste.
+Étape 2 — Design (Jours 2–3)
+L'architecture avant le code.
 
-Si tu veux voir à quoi ressemble un audit initial, commente "MÉTHODE" et je te l'envoie.
+On dessine le workflow complet : triggers, conditions, chemins d'erreur, intégrations.
+On valide avec le client avant d'écrire la première ligne.
+
+Aucune mauvaise surprise en fin de projet. Ce qu'on dessine est ce qu'on livre.
+
+---
+
+Étape 3 — Build (Jours 4–8)
+Construction dans n8n, intégrations testées une par une.
+
+Chaque node est validé avec des données réelles. Chaque chemin d'erreur est prévu.
+Le système ne tombe pas parce qu'une API est indisponible.
+
+---
+
+Étape 4 — Launch (Jours 9–10)
+Tests end-to-end avec les données du client.
+
+Monitoring configuré. Alertes en place. Runbook livré.
+Go-live le jour 10. Suivi actif pendant 30 jours.
+
+---
+
+En 10 jours, ton système tourne.
+En 30 jours, tu vois les premiers résultats chiffrés.
+C'est notre garantie.
+
+Commente "MÉTHODE" et je t'envoie le document complet
+avec les templates d'audit gratuits.
 ```
 
 **Hashtags :**
-`#Automatisation #IA #Méthode #WebMind #n8n #PME #Process #BusinessDevelopment`
+`#Automatisation #Méthode #n8n #IA #PME #WebMind`
 
 ---
 
-## POST 6 — Citation Thought Leadership (Visuel 6)
+## POST 6 — Thought leadership / opinion (Visuel 6)
 **Format : Post image + texte**
 **Objectif : Positionnement + partage + autorité**
+**Jour de publication : Vendredi**
 
 ```
-"L'IA sans une interface d'exception est une puissance gâchée."
+Un système IA qui produit de bons outputs dans un outil que personne n'utilise, c'est 0.
 
-J'en suis convaincu depuis le début.
+J'ai vu des entreprises investir 3 mois sur des pipelines IA complexes.
+Et personne dans l'équipe ne les consultait.
+Parce que les résultats n'étaient pas là où les gens travaillaient.
 
-Voici ce que j'observe chez nos clients avant qu'on intervienne :
+La puissance d'un système IA se mesure à son taux d'adoption. Pas à sa sophistication.
 
-L'IA tourne. Les résultats arrivent.
-Mais personne ne les lit.
-Parce que les outputs sont bruts, indigestes, pas actionnables.
+Si le résumé d'appel atterrit dans Notion mais que ton commercial vit dans Slack,
+le résumé n'existe pas.
+Si le score du lead arrive dans un dashboard que personne n'ouvre,
+le score ne sert à rien.
 
-Un résumé d'appel en 400 mots dans un email.
-Un score de lead dans une colonne perdue de Google Sheets.
-Une alerte Slack qui noie les autres notifications.
+L'IA doit s'intégrer dans les outils existants. Pas créer de nouveaux comportements.
 
-L'information était là. L'action n'a pas eu lieu.
+Chez WebMind, on a une règle simple :
+chaque output IA doit apparaître là où l'équipe travaille déjà.
 
-Ce qu'on fait chez WebMind :
-→ Les outputs IA sont structurés pour l'action immédiate
-→ Chaque information arrive dans le bon outil, pour la bonne personne, au bon moment
-→ L'interface (Slack, SMS, CRM, dashboard) est aussi importante que le modèle IA
+Le score du lead → dans Slack.
+Le résumé d'appel → dans le CRM que le commercial a déjà ouvert.
+L'alerte prioritaire → dans le fil de discussion de l'équipe.
 
-La meilleure automatisation au monde est inutile si personne ne l'utilise.
+Pas de nouveau dashboard. Pas de nouvelle habitude à créer.
 
-Le vrai différentiateur : le design du système, pas la sophistication du modèle.
+La technologie la plus puissante est celle qu'on utilise sans y penser.
 
-Tu as des exemples d'outils IA que tu utilises peu parce que l'interface est médiocre ?
+Est-ce que tes outputs IA sont actionnables là où ton équipe travaille,
+ou est-ce qu'ils s'accumulent quelque part que personne ne regarde ?
 ```
 
 **Hashtags :**
-`#IA #Design #UX #Automatisation #WebMind #Leadership #Business #Systèmes`
+`#IA #Automatisation #Design #Adoption #PME #WebMind`
 
 ---
 
 ## POST 7 — Before / After (Visuel 7)
 **Format : Post image + texte**
 **Objectif : Conversion + preuve sociale**
+**Jour de publication : Vendredi S1**
 
 ```
-Ce visuel résume 80% de nos missions.
+Le même lead. Le même commercial. Le même produit.
+Traité en 4h27 vs 58 secondes. La différence de conversion était de 47%.
 
-AVANT WebMind :
+Ce n'est pas une question de talent commercial. C'est une question de système.
 
-❌ Lead soumis sur le formulaire
-❌ Email reçu dans une boîte partagée
-❌ Commercial voit l'email 3h après (en réunion)
-❌ Relance oubliée le lendemain
-❌ Le lead a signé avec le concurrent
+Voici le before/after exact :
 
-Délai moyen de réponse : 4h27.
-En B2B, c'est une éternité.
+❌ AVANT
 
----
+Lead arrive à 09h14 par formulaire web.
+Commercial le voit à 09h34 en ouvrant ses emails.
+Il qualifie manuellement : 12 minutes.
+Il rédige son email de réponse : 8 minutes.
+Délai réel mesuré : 4h27.
+(pauses, réunions, priorités concurrentes)
 
-APRÈS WebMind :
+✅ APRÈS
 
-✅ Lead soumis sur le formulaire
-✅ IA analyse l'intention en 8 secondes
-✅ CRM mis à jour automatiquement (score, contexte, source)
-✅ Commercial alerté sur Slack en < 60 secondes avec tout le contexte
-✅ Lead reçoit un SMS personnalisé avec lien de réservation
+Lead arrive à 09h14.
+Webhook capte la soumission : 0 seconde.
+Claude score l'intention en 3 secondes.
+Slack alerte le commercial avec résumé complet : +5 secondes.
+SMS de confirmation envoyé au lead : +8 secondes.
+Lead dans le CRM avec tags et assignation : +12 secondes.
 
-Délai moyen de réponse : 58 secondes.
-Taux de conversion leads → RDV : +47%.
+Délai réel mesuré : 58 secondes.
+Peu importe l'heure. Peu importe si le commercial est en réunion.
 
----
+Le commercial intervient uniquement pour closer.
+Le système fait tout le reste.
 
-La différence entre ces deux systèmes ?
-10 jours de travail. Une fois. Et ça tourne 24h/24 après.
-
-Tu veux voir le détail technique du système ?
-Commente "SYSTÈME" et je t'envoie le schéma complet.
+Commente "SYSTÈME" et je t'envoie le schéma complet avec la liste des outils.
 ```
 
 **Hashtags :**
-`#Automatisation #WebMind #IA #Prospection #CRM #PME #LeadGeneration #Transformation`
+`#LeadEngine #Automatisation #Commercial #B2B #IA #WebMind`
 
 ---
 
-## POST 8 — Infographie data / Chiffres clés (Visuel 8)
+## POST 8 — Data / Chiffres clés (Visuel 8)
 **Format : Post image + texte**
 **Objectif : Notoriété + partage + autorité sectorielle**
+**Jour de publication : Lundi S3**
 
 ```
-4 chiffres qui vont changer ta façon de voir l'IA en B2B.
+Le premier qui répond gagne. Ce n'est pas une opinion. C'est ce que disent les données.
 
-📊 67% des décideurs B2B disent que la vitesse de réponse est le facteur n°1 dans leur choix de prestataire.
-(Source : Salesforce State of Sales 2025)
+Et la majorité des PME B2B françaises répondent encore en plusieurs heures.
 
-📊 Les leads contactés en moins de 5 minutes ont 9x plus de chances de convertir que ceux contactés après 30 minutes.
-(Source : Harvard Business Review)
+4 chiffres qui changent la façon dont tu dois penser ta réponse commerciale :
 
-📊 Les entreprises qui automatisent leur qualification de leads constatent une réduction de 35% de leur coût d'acquisition.
-(Source : McKinsey AI Report 2025)
+1. -78% de chances de qualifier un lead si tu rappelles après 5 minutes.
+Pas après 1 heure. Après 5 minutes.
 
-📊 En 2026, 75% des interactions commerciales B2B seront gérées sans intervention humaine au premier contact.
-(Source : Gartner)
+2. 35 à 50% des deals vont au vendeur qui répond le premier.
+Pas le mieux préparé. Pas le moins cher. Le premier.
 
-Ce que ces chiffres signifient concrètement :
+3. Le délai médian de réponse des PME françaises est de 3h47.
+Les entreprises qui ont automatisé leur qualification répondent en moins de 90 secondes.
 
-Le premier qui répond gagne.
-Pas le meilleur produit.
-Pas le meilleur prix.
-Le premier.
+4. Un lead contacté dans la minute convertit 9x mieux qu'un lead contacté après 5 minutes.
+9x. Pas 9%. 9 fois.
 
-Et en 2026, "le premier" c'est celui dont le système IA répond en 60 secondes pendant que ses concurrents dorment.
+Le marché ne récompense pas la qualité de ta réponse si elle arrive trop tard.
 
-Tu es dans quel camp actuellement ?
+Ces 4 chiffres, tes concurrents les connaissent aussi.
+
+La question c'est : tu es dans quel camp ?
+Celui qui automatise la rapidité ou celui qui réfléchit encore à comment s'organiser ?
 ```
 
 **Hashtags :**
-`#Data #IA #B2B #Automatisation #LeadGeneration #WebMind #Stats #Commercial #Croissance`
+`#Data #B2B #Commercial #Prospection #IA #Automatisation #WebMind`
 
 ---
 
 ## POST 9 — Behind the Scenes (Visuel 9)
-**Format : Post image + texte**
+**Format : Post image + texte (story personnelle)**
 **Objectif : Humanisation + confiance + curiosité**
+**Jour de publication : Jeudi S2**
 
 ```
-Voici à quoi ressemble une journée de build chez WebMind.
+Il est 11h23. Le workflow plante en prod.
+Le client présente son système à son équipe dans 37 minutes.
 
-Ce matin : on a construit un système de qualification IA pour un client dans l'immobilier de luxe.
+Voici ce qui s'est passé, ce que j'ai fait,
+et ce que ça m'a appris sur comment construire des systèmes qui ne tombent pas.
 
-8h00 — Review du workflow n8n de la veille.
-3 nœuds à optimiser. Le scoring IA renvoyait "Warm" pour des leads qui étaient clairement "Hot".
+Le webhook Twilio renvoyait un 422 sur chaque SMS sortant.
+Pas en test. En prod. Sur les vraies données client.
 
-9h30 — Refonte du prompt Claude.
-On a ajouté des signaux contextuels : budget mentionné, urgence exprimée, nombre de biens recherchés.
-Score de précision : 71% → 94% sur les données de test.
+J'ouvre les logs n8n.
 
-11h00 — Intégration Twilio.
-Le SMS de confirmation doit arriver en moins de 30 secondes après la soumission.
-Premier test : 23 secondes. On valide.
+Le problème : des espaces invisibles dans les numéros de téléphone Airtable.
+Notre node de validation ne les avait pas anticipés.
+Les vraies données sont sales. Les données de test, non.
 
-14h00 — Test end-to-end avec données réelles.
-On soumet un formulaire avec un profil "acheteur sérieux".
-60 secondes plus tard : CRM à jour, Slack alerté, SMS envoyé, commercial notifié.
+12 minutes pour diagnostiquer.
+4 minutes pour corriger le node de nettoyage.
+3 minutes de tests end-to-end.
 
-Bilan de la journée :
-Un système qui tourne 24h/24. Sans commercial de permanence. Sans relance manuelle.
+Système opérationnel à 11h43. 20 minutes avant la présentation.
 
-C'est ça le vrai travail de WebMind.
-Pas de la magie. De l'ingénierie système appliquée au business.
+La leçon :
 
-Des questions sur comment on build ? Pose-les en commentaires.
+Les bugs en prod arrivent toujours sur des cas que les données de test ne couvrent pas.
+Numéros avec espaces. Emails en majuscules. Champs vides non prévus.
+
+Depuis, chaque workflow WebMind a un node de nettoyage de données en entrée.
+Systématiquement. Avant toute logique métier.
+
+Ce n'est pas glamour. C'est ce qui fait la différence entre un système qui tourne
+6 mois sans interruption et un qui plante en prod le jour J.
+
+Et toi, c'est quoi le bug en prod qui t'a le plus appris ?
 ```
 
 **Hashtags :**
-`#BehindTheScenes #IA #n8n #Build #Automatisation #WebMind #Tech #Startup #Transparence`
+`#Build #Automatisation #n8n #Engineering #BehindTheScenes #WebMind`
 
 ---
 
-## POST 10 — Accroche polémique (Visuel 10)
+## POST 10 — Opinion contrariante / Polémique (Visuel 10)
 **Format : Post image + texte**
 **Objectif : Viralité + positionnement disruptif + leads entrants**
+**Jour de publication : Lundi S1 (premier post)**
 
 ```
-Les agences web classiques sont mortes.
+Les agences web classiques vendent des vitrines.
+Leurs clients veulent des machines commerciales.
 
-Je vais te dire pourquoi — et certains vont détester ce post.
+Ce n'est pas une tendance. C'est déjà le présent.
+Et la plupart des agences ne l'ont pas vu venir.
 
-Une agence web classique en 2024 :
-→ Elle te livre un site "responsive et optimisé SEO"
-→ Elle te facture 5 000 à 30 000€
-→ Le site est beau. Il convertit peu.
-→ Elle est joignable 9h-18h du lundi au vendredi.
+Un CEO de PME en 2026 n'a plus besoin d'un beau site.
 
-Ce que ses clients veulent en 2026 :
-→ Un site qui génère des leads et les qualifie automatiquement
-→ Un système qui répond aux prospects en moins de 60 secondes
-→ Une infrastructure qui s'améliore avec les données, pas avec une refonte tous les 3 ans
-→ Un partenaire qui mesure son ROI, pas ses heures
+Il a besoin que chaque lead soit capté, qualifié et transmis
+à son commercial en moins de 60 secondes.
+Il a besoin que chaque appel manqué génère un suivi automatique.
+Il a besoin que sa réputation Google grandisse sans action manuelle.
 
-Le marché ne veut plus d'une vitrine.
-Il veut une machine commerciale.
+Le site web est devenu l'entrée du système. Pas le produit final.
 
-Les agences qui ont compris ça ont pivoté vers l'automatisation IA.
-Celles qui n'ont pas compris vont perdre leurs clients dans les 24 mois qui viennent.
+Les agences qui survivent en 2026 ne vendent plus des pages.
+Elles vendent du chiffre d'affaires automatisé.
 
-Chez WebMind, on n'est pas une agence web.
-On est une agence d'automatisation commerciale.
-La différence : nos systèmes génèrent des revenus mesurables, pas des pixels.
+Voici ce que je vois sur le marché en ce moment :
 
-Tu penses que j'exagère ?
-Dis-le-moi en commentaires — le débat est ouvert.
+Les agences web classiques perdent des clients qui ne comprennent plus
+pourquoi ils paient 500€/mois pour "la maintenance".
+Les rares agences qui ont pivoté vers l'automatisation ont des listes d'attente.
+
+La différence ?
+L'une te dit combien coûte ton site.
+L'autre te dit combien te coûte chaque lead non traité.
+
+Ce n'est pas la même conversation. Ce n'est pas le même marché.
+
+Les agences web classiques ne meurent pas parce que la technologie a changé.
+Elles meurent parce que la question du client a changé.
+
+Avant : "Comment je communique mieux ?"
+Maintenant : "Comment je vends plus, avec moins d'effort manuel ?"
+
+Si ton agence ne répond pas à la deuxième question, quelqu'un d'autre le fera.
+
+C'est ta réalité ou tu penses que le marché n'est pas encore là ?
+Débat ouvert en commentaires.
 ```
 
 **Hashtags :**
-`#Disruption #AgenceWeb #IA #Automatisation #WebMind #Marketing #Business #Futur #Opinion`
+`#AgenceWeb #Automatisation #IA #Transformation #PME #WebMind #Opinion`
 
 ---
 
-## Calendrier éditorial suggéré (2 semaines type)
+## Calendrier éditorial — 3 semaines de lancement
 
-| Semaine | Jour | Post | Format | Visuel |
-|---------|------|------|--------|--------|
-| S1 | Lundi | Post 10 — Polémique | Image + texte | Visuel 10 |
-| S1 | Mercredi | Post 1 — Carrousel 5 automatisations | Carrousel | Visuel 1 |
-| S1 | Vendredi | Post 7 — Before/After | Image + texte | Visuel 7 |
-| S2 | Lundi | Post 2 — Étude de cas 3 387 leads | Image + texte | Visuel 2 |
-| S2 | Mercredi | Post 5 — Carrousel méthode | Carrousel | Visuel 5 |
-| S2 | Vendredi | Post 9 — Behind the Scenes | Image + texte | Visuel 9 |
+| Semaine | Jour | Post | Format |
+|---------|------|------|--------|
+| S1 | Lundi | Post 10 — Polémique | Image + texte |
+| S1 | Mercredi | Post 1 — Carrousel 5 automatisations | Carrousel |
+| S1 | Vendredi | Post 7 — Before/After | Image + texte |
+| S2 | Lundi | Post 2 — Étude de cas 3 387 leads | Image + texte |
+| S2 | Mercredi | Post 3 — Prospection email générique | Image + texte |
+| S2 | Jeudi | Post 9 — Behind the Scenes | Image + texte |
+| S3 | Lundi | Post 8 — Data / 4 chiffres | Image + texte |
+| S3 | Mercredi | Post 5 — Carrousel méthode | Carrousel |
+| S3 | Vendredi | Post 6 — Thought leadership interface | Image + texte |
 
-Posts en rotation (1×/mois) : Post 3, 4, 6, 8
+Posts en rotation (1×/mois) : Post 4
+
+---
+
+## Comment triggers — référence rapide
+
+| Mot-clé | Ce qu'on envoie |
+|---------|----------------|
+| AUDIT | Diagnostic gratuit 15 points |
+| DÉMO | Vidéo de présentation du Lead Engine |
+| FLOW | Workflow de prospection contextualisée |
+| MÉTHODE | Document méthode WebMind + templates d'audit |
+| SYSTÈME | Schéma technique du Lead Engine complet |
 
 ---
 
 ## Règles d'engagement LinkedIn
 
 1. **Hook = première ligne** — si ce n'est pas accrocheur en 3 mots, refais-le
-2. **Paragraphes courts** — max 2 lignes par bloc, jamais de pavé
-3. **Toujours un CTA unique** — un seul mot-clé en commentaire ("AUDIT", "DÉMO", "SYSTÈME")
-4. **Répondre dans la première heure** — l'algorithme LinkedIn booste les posts actifs
-5. **Pas d'images avec trop de texte** — LinkedIn pénalise les visuels text-heavy
-6. **Publier aux bons créneaux** — 8h–9h ou 12h–13h heure française (lundi, mercredi, vendredi)
+2. **Rehook** — ligne de tension 2-3 lignes après le hook
+3. **Paragraphes courts** — max 2 lignes par bloc
+4. **Un seul CTA** — un mot-clé en commentaire par post
+5. **Répondre dans la première heure** — l'algorithme booste les posts actifs
+6. **Publier aux bons créneaux** — 8h–9h ou 12h–13h FR (Lundi, Mercredi, Vendredi)
+7. **Pas de lien dans le corps du post** — en commentaire uniquement
