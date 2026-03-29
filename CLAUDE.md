@@ -64,7 +64,7 @@ Follow this order on every project — do not skip steps:
 | n8n env vars | `C:\Users\ALI\.n8n\.env` (Twilio, Anthropic) |
 | Agency website | `C:\Users\ALI\claude_code\my-agency-app\` — `npm run dev` |
 | Cloudflared | `C:\Users\ALI\cloudflared.exe` |
-| Quick tunnel | Starts with n8n script — URL changes on each restart |
+| Permanent tunnel | `https://n8n.webmindlab.com` — launched automatically by start-n8n.ps1 |
 | Python | `C:\Users\ALI\AppData\Local\Programs\Python\Python312\python.exe` |
 | Whisper PTT | `C:\Users\ALI\whisper-to-claude\start-whisper.ps1` |
 
@@ -77,19 +77,19 @@ Follow this order on every project — do not skip steps:
 | Agency site | https://claude-webmind.vercel.app (live) |
 | Custom domain | https://www.webmindlab.com — LIVE |
 | GitHub repo | https://github.com/fares-sketch/claude-Webmind |
-| n8n public (temp) | https://typing-relations-scales-faqs.trycloudflare.com (changes on restart) |
-| n8n public (target) | https://n8n.webmindlab.com (to configure) |
+| n8n public | https://n8n.webmindlab.com ✅ PERMANENT (tunnel ID: 22006beb-bfe8-483c-a1f6-078d421d3a45) |
 
 ---
 
 ## Built Systems
 
-### 1. Lead Engine — LIVE (2026-03-23)
-- n8n workflow ID: `yoFumIpVN3yHSrIx` — 10 nodes, tested end-to-end
-- Flow: Webhook → Validate → Claude Haiku scoring → Airtable CRM → Router → Slack + Twilio SMS
+### 1. Lead Engine — LIVE + EMAIL (2026-03-29)
+- n8n workflow ID: `yoFumIpVN3yHSrIx` — 12 nodes, tested end-to-end
+- Flow: Webhook → Validate → Claude Haiku scoring → Airtable CRM → Router → Slack + Twilio SMS + Resend Email
 - Airtable Base: `appFknzmZRW97vPCE`, table: `Leads`
 - Slack: `#leads-chauds` (Hot/Warm) + `#leads-froids` (Cold)
-- Webhook: `POST /webhook/lead-capture`
+- Email: Hot/Warm = confirmation + cal.com/webmindlab/30min — Cold = nurture + webmindlab.com
+- Webhook: `POST /webhook/lead-capture` via `https://n8n.webmindlab.com`
 - Details: `@memory/project_lead_engine.md`
 
 ### 2. Agency Website — LIVE (2026-03-22)
@@ -134,9 +134,8 @@ Details: `@systems/lead-engine.md`, `@systems/call-engine.md`, `@systems/review-
 
 ## Pending Infrastructure Tasks
 
-- [ ] Run `cloudflared tunnel create n8n-webmind`
-- [ ] Add CNAME `n8n → <tunnel-id>.cfargotunnel.com` in Cloudflare (webmindlab.com)
-- [ ] Update `N8N_CONTACT_WEBHOOK` in `.env.local` and Vercel env vars
+- [x] ~~Tunnel permanent n8n.webmindlab.com~~ ✅ DONE
+- [x] ~~Email Resend Lead Engine~~ ✅ DONE
 - [ ] Build Call Engine workflow in n8n
 - [ ] Build Review Engine workflow in n8n
 
